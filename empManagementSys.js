@@ -1,5 +1,6 @@
 var mysql = require('mysql2');
 var inquirer = require('inquirer');
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -69,7 +70,8 @@ function viewEmployees() {
         'SELECT name, title, first_name, last_name, salary FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON role.id = employee.role_id;'
     connection.query(query, function (err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
+        // console.log(res);
     })
     };
 function viewByDept() {};
