@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
+    password: 'Bjbootcamp1!',
     database: 'employee_trackerdb'
 });
 
@@ -62,3 +62,19 @@ function manageEmpSys() {
             }
         });
 }
+
+function addEmployee() {};
+function viewEmployees() {
+    var query = 
+        'SELECT name, title, first_name, last_name, salary FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON role.id = employee.role_id;'
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+    })
+    };
+function viewByDept() {};
+function viewByMngr() {};
+function removeEmp() {};
+function updateEmpRole() {};
+function updateEmpMngr() {};
+
