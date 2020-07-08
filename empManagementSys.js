@@ -1,6 +1,7 @@
 var mysql = require('mysql2');
 var inquirer = require('inquirer');
 const cTable = require('console.table');
+var figlet = require('figlet');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -10,12 +11,21 @@ var connection = mysql.createConnection({
     database: 'employee_trackerdb'
 });
 
-connection.connect(function (err) {
-    if (err) throw err;
-     manageEmpSys();
+figlet('Employee Manager', function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data)
 });
 
-function manageEmpSys() {
+connection.connect(function (err) {
+    if (err) throw err;
+    employeeSysQuery();
+});
+
+function employeeSysQuery() {
     inquirer
         .prompt({
             name: 'action',
@@ -62,9 +72,12 @@ function manageEmpSys() {
                     break;
             }
         });
-}
+};
 
-function addEmployee() {};
+function addEmployee() {
+    
+};
+
 function viewEmployees() {
     var query = 
         'SELECT name, title, first_name, last_name, salary FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON role.id = employee.role_id;'
@@ -72,11 +85,62 @@ function viewEmployees() {
         if (err) throw err;
         console.table(res);
         // console.log(res);
+
+        employeeSysQuery();
     })
-    };
-function viewByDept() {};
+    
+};
+
+function viewByDept() {
+    var query = 
+        'SELECT name, first_name, last_name FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON role.id = employee.role_id'; 
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        // console.log(res);
+
+        employeeSysQuery();
+    })
+};
+
 function viewByMngr() {};
-function removeEmp() {};
+
+
+
+function removeEmp() {
+    connection.query("SELECT CONCAT(first_name, ' ', last_name) as fullName FROM employee", function (err, results) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: 'choice',
+                    type: 'list',
+                    choices: function () {
+                        var choiceArray = [];
+                        for (var i = 0; i < results.length; i++) {
+                            choiceArray.push(results[i].fullName);
+                        }
+                        return choiceArray;
+                    },
+                    message: 'Which employee do you want to remove?'
+                },
+            ])
+            .then(function (answer) {
+                console.log(`Removing ${ answer.choice } from EMS...`);
+                
+                connection.query(
+                    "DELETE FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?",
+                    { choice: answer.choice },
+                    function(err, res) {
+                        if (err) throw err;
+                        console.log('Employee: ' + res.first_name + ' ' + res.last_name + ' removed.');
+                })
+            })
+
+            employeeSysQuery();
+        })
+};
+
 function updateEmpRole() {};
 function updateEmpMngr() {};
 
