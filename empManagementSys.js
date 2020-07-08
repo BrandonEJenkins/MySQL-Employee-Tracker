@@ -75,7 +75,58 @@ function employeeSysQuery() {
 };
 
 function addEmployee() {
-    
+    inquirer
+        .prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'Enter the employee\'s first name: '
+            },
+            {
+                name: 'lastName',
+                type: 'input',
+                message: 'Enter the employee\'s last name: '
+            },
+            {
+                name: 'department',
+                type: 'list',
+                message: 'Enter the employee\'s department: ',
+                choice: [
+                    'Sales',
+                    'Engineering',
+                    'Finance',
+                    'Legal'
+                ]
+            },
+            {
+                name: 'title',
+                type: 'list',
+                message: 'Enter the employee\'s title: ',
+                choice: [
+                    'Accountant',
+                    'Lawyer',
+                    'Lead Engineer',
+                    'Legal Team Lead',
+                    'Sales Lead',
+                    'Salesperson',
+                    'Software Engineer'
+                ]
+            },
+            {
+                name: 'salary',
+                type: 'input',
+                message: 'Enter the employee\'s salary: '
+            },
+    ])
+    .then(function (answer) {
+        connection.query(
+            `START TRANSACTION; SELECT * FROM employee; INSERT INTO employee (first_name, last_name) VALUES(${ answer.firstName }, ${ answer.lastName }); INSERT INTO role (title, salary) VALUES(${ answer.title }, ${ answer.salary }); INSERT INTO department (${ answer.department }); COMMIT;`, function(err, res) {
+                if (err) throw err;
+                console.table(res);
+
+            employeeSysQuery();
+        })
+    })
 };
 
 function viewEmployees() {
