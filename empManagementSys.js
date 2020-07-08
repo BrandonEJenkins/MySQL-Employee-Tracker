@@ -91,7 +91,7 @@ function addEmployee() {
                 name: 'department',
                 type: 'list',
                 message: 'Enter the employee\'s department: ',
-                choice: [
+                choices: [
                     'Sales',
                     'Engineering',
                     'Finance',
@@ -102,7 +102,7 @@ function addEmployee() {
                 name: 'title',
                 type: 'list',
                 message: 'Enter the employee\'s title: ',
-                choice: [
+                choices: [
                     'Accountant',
                     'Lawyer',
                     'Lead Engineer',
